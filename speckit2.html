@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speckit vs. Vibe Coding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Marked.js for rendering Markdown to HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Calm Harmony (BG: gray-50, Accent: indigo-600, Text: slate-700) -->
+    <!-- Application Structure Plan: Single-page narrative. 1. Problem (w/ AI Audit) 2. Solution 3. Demo (Generate Requirements) 4. Clarify (Coverage & Options) 5. Use Case 6. Efficiency -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .nav-link {
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        .tab-btn {
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 450px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .problem-item {
+            cursor: pointer;
+        }
+        /* Styles for Markdown Content */
+        .prose h1, .prose h2, .prose h3 { font-weight: 700; color: #e2e8f0; margin-top: 1em; margin-bottom: 0.5em; }
+        .prose p { margin-bottom: 0.8em; color: #cbd5e1; }
+        .prose ul, .prose ol { padding-left: 1.5em; list-style-type: disc; margin-bottom: 1em; color: #cbd5e1; }
+        .prose strong { color: #818cf8; }
+        .prose code { background: #1e293b; padding: 0.2em 0.4em; rounded: 0.25em; font-family: monospace; }
+        
+        /* Tables for Clarify Options */
+        .prose table { width: 100%; border-collapse: collapse; margin-bottom: 1em; background-color: #1e293b; border-radius: 8px; overflow: hidden; }
+        .prose th { background-color: #334155; color: #f8fafc; font-weight: 600; text-align: left; padding: 12px; border-bottom: 1px solid #475569; }
+        .prose td { padding: 12px; border-bottom: 1px solid #334155; color: #cbd5e1; }
+        .prose tr:last-child td { border-bottom: none; }
+        
+        /* Light mode prose for the Risk Analyzer */
+        .prose-light h1, .prose-light h2, .prose-light h3 { font-weight: 700; color: #1f2937; margin-top: 0.5em; }
+        .prose-light p { margin-bottom: 0.5em; color: #475569; }
+        .prose-light ul { padding-left: 1.5em; list-style-type: disc; color: #475569; }
+        .prose-light strong { color: #dc2626; }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <header class="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <h1 class="text-xl font-bold text-indigo-600">From Vibe to Spec</h1>
+                <div class="hidden sm:flex space-x-6">
+                    <a href="#problem" class="nav-link text-sm font-medium text-slate-600 py-1">The Problem</a>
+                    <a href="#solution" class="nav-link text-sm font-medium text-slate-600 py-1">The Solution</a>
+                    <a href="#demo" class="nav-link text-sm font-medium text-slate-600 py-1 text-indigo-600 font-bold">Live Demo</a>
+                    <a href="#clarify" class="nav-link text-sm font-medium text-slate-600 py-1 text-amber-600 font-bold">Clarify</a>
+                    <a href="#use-case" class="nav-link text-sm font-medium text-slate-600 py-1">Use Case</a>
+                    <a href="#efficiency" class="nav-link text-sm font-medium text-slate-600 py-1">Efficiency</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <section class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">GitHub Speckit for AI-Driven Development</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">Moving from ambiguous "vibe coding" to precise, spec-driven generation to save time, reduce costs, and ship reliable code.</p>
+        </section>
+
+        <section id="problem" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-3 text-center">The Problem: The "Vibe Coding" Trap</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center mb-8">"Vibe coding" is the practice of giving AI vague, high-level prompts and hoping for the best. It feels fast initially, but it's dangerously inefficient and creates significant "AI Debt".</p>
+            
+            <!-- Gemini Feature: Risk Analyzer -->
+            <div class="max-w-3xl mx-auto bg-red-50 border border-red-100 rounded-xl p-6 mb-12 shadow-sm">
+                <h3 class="text-lg font-semibold text-red-800 mb-2 flex items-center">
+                    <span class="mr-2 text-xl">⚠️</span> Live Vibe Audit (Powered by Gemini)
+                </h3>
+                <p class="text-sm text-red-600 mb-4">Test a vague prompt below to see why "Vibe Coding" is risky.</p>
+                <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                    <input type="text" id="vibe-input" placeholder="e.g., 'Make a user dashboard' or 'Add a payment form'" class="flex-1 p-3 rounded-lg border border-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm" value="Create a login page for my app">
+                    <button id="analyze-vibe-btn" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm whitespace-nowrap">
+                        Analyze Risk ✨
+                    </button>
+                </div>
+                <div id="vibe-analysis-output" class="hidden bg-white p-4 rounded-lg border border-red-100 text-sm prose-light"></div>
+            </div>
+            
+            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+                <ul class="divide-y divide-gray-200" id="problem-list">
+                    <li class="p-5 problem-item" data-target="problem-1">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-indigo-700">1. High Rework & Debugging Cycles</h3>
+                            <span class="text-indigo-500 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <p id="problem-1" class="text-slate-600 mt-3 hidden">The AI's first draft rarely matches our specific business logic, database schema, or security standards. This leads to a frustrating loop: AI gen → dev review → manual fix → AI re-gen → dev review → more manual fixes.</p>
+                    </li>
+                    <li class="p-5 problem-item" data-target="problem-2">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-indigo-700">2. Inconsistency and "Hallucinations"</h3>
+                            <span class="text-indigo-500 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <p id="problem-2" class="text-slate-600 mt-3 hidden">Without a spec, the AI invents its own solutions. It might use a different hashing algorithm, create duplicative helper functions, or store data in an insecure way (e.g., in-memory tokens), leading to a fragmented and non-standard codebase.</p>
+                    </li>
+                    <li class="p-5 problem-item" data-target="problem-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-indigo-700">3. Security Gaps & Non-Compliance</h3>
+                            <span class="text-indigo-500 transform transition-transform duration-300">▼</span>
+                        </div>
+                        <p id="problem-3" class="text-slate-600 mt-3 hidden">This is our biggest risk. A vague prompt like "add login" might produce code vulnerable to SQL injection, missing rate-limiting, or improper error handling that leaks information. We cannot "vibe" our way to secure, compliant code.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="solution" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-3 text-center">The Solution: GitHub Speckit</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center mb-12">Speckit forces AI to be a precise engineer. It works by having the developer first define a functional specification. The AI is then constrained to *only* generate code that fulfills these functional requirements.</p>
+
+            <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+                <h3 class="text-xl font-semibold text-center mb-8">The Spec-Driven Workflow</h3>
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
+                    
+                    <div class="flex-1 text-center p-4 bg-indigo-50 rounded-lg h-full">
+                        <div class="text-4xl mb-2">1.</div>
+                        <h4 class="font-semibold text-indigo-800">Draft Requirements</h4>
+                        <p class="text-sm text-indigo-700">Define User Stories, Functional Requirements (FRs), and Success Criteria.</p>
+                    </div>
+
+                    <div class="text-2xl text-indigo-400 transform rotate-90 md:rotate-0">→</div>
+
+                    <div class="flex-1 text-center p-4 bg-gray-100 rounded-lg h-full">
+                        <div class="text-4xl mb-2">2.</div>
+                        <h4 class="font-semibold text-slate-800">Run Speckit Clarify</h4>
+                        <p class="text-sm text-slate-600">AI audits the spec for gaps, asking clarification questions to handle edge cases.</p>
+                    </div>
+
+                    <div class="text-2xl text-indigo-400 transform rotate-90 md:rotate-0">→</div>
+                    
+                    <div class="flex-1 text-center p-4 bg-indigo-50 rounded-lg h-full">
+                        <div class="text-4xl mb-2">3.</div>
+                        <h4 class="font-semibold text-indigo-800">Generate Code</h4>
+                        <p class="text-sm text-indigo-700">AI generates precise code that strictly follows the approved requirements.</p>
+                    </div>
+
+                    <div class="text-2xl text-indigo-400 transform md:rotate-0">→</div>
+
+                    <div class="flex-1 text-center p-4 bg-gray-100 rounded-lg">
+                        <div class="text-4xl mb-2">4.</div>
+                        <h4 class="font-semibold text-slate-800">Review & Integrate</h4>
+                        <p class="text-sm text-slate-600">Developer reviews near-final code. Rework is minimal, focused on integration, not logic.</p>
+                    </div>                    
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE DEMO SECTION (Updated for Requirements) -->
+        <section id="demo" class="mb-20 pt-16 -mt-16 bg-indigo-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-16">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3 text-center">Live Demo: The Requirement Generator</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center mb-12">Step 1: Convert a vague idea into a structured Requirements Document (User Stories, Functional Requirements, Success Criteria).</p>
+
+                <div class="flex flex-col gap-8">
+                    <!-- 1. Input Side -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                            Enter Vibe (Vague Idea)
+                        </h3>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <textarea id="demo-input" class="w-full flex-1 p-4 border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none min-h-[100px]" placeholder="e.g., I need a way for users to upload their profile pictures and crop them."></textarea>
+                            <button id="generate-spec-btn" class="md:w-64 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold transition-all flex justify-center items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 whitespace-nowrap">
+                                <span>Generate Requirements</span>
+                                <span>✨</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Output Side -->
+                    <div class="bg-slate-800 p-1 rounded-xl shadow-xl flex flex-col relative overflow-hidden ring-1 ring-slate-700">
+                        <!-- Header Bar -->
+                        <div class="bg-slate-900 p-4 flex justify-between items-center border-b border-slate-700 rounded-t-lg">
+                            <h3 class="text-xl font-bold text-indigo-400 flex items-center gap-2">
+                                <span class="bg-indigo-900 text-indigo-300 w-8 h-8 rounded-full flex items-center justify-center text-sm border border-indigo-700">2</span>
+                                Generated Requirements
+                            </h3>
+                            <div class="flex items-center gap-4">
+                                <span id="demo-loading" class="hidden text-indigo-300 text-sm animate-pulse">Thinking...</span>
+                                <button id="transfer-to-clarify-btn" class="hidden text-xs sm:text-sm bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded transition-colors flex items-center gap-1 border border-amber-500 font-semibold shadow-sm">
+                                    <span>⚡</span> Refine in Clarify
+                                </button>
+                                <button id="view-full-btn" class="text-xs sm:text-sm bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded transition-colors flex items-center gap-1 border border-slate-600">
+                                    <span>⤢</span> Fullscreen
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Main Content Area -->
+                        <div class="bg-slate-900 p-8 overflow-y-auto min-h-[400px] max-h-[600px] border-t border-slate-800 custom-scrollbar prose prose-invert max-w-none">
+                            <div id="demo-output" class="text-green-400 font-mono text-sm leading-relaxed">
+                                <em class="text-slate-500">Waiting for input above...</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SPECKIT CLARIFY SECTION (Updated for Coverage/Options) -->
+        <section id="clarify" class="mb-20 pt-16 -mt-16 bg-amber-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-16 border-t border-amber-100">
+            <div class="container mx-auto max-w-5xl">
+                <h2 class="text-3xl font-bold text-slate-800 mb-3 text-center">Speckit Clarify</h2>
+                <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center mb-8">Specs often lack detail. Clarify acts as a "Senior Engineer" that performs a coverage analysis and presents structured options for ambiguous decisions.</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
+                    <!-- Left: Raw Spec Input -->
+                    <div class="flex flex-col h-[600px] bg-white rounded-xl shadow-md border border-amber-100">
+                        <div class="p-4 border-b border-gray-100 bg-gray-50 rounded-t-xl flex justify-between items-center">
+                            <h3 class="font-bold text-slate-700">Initial Spec / Requirements</h3>
+                            <button id="run-clarify-btn" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-md transition-all flex items-center gap-2">
+                                <span>Run Coverage Scan</span> <span>🔍</span>
+                            </button>
+                        </div>
+                        <textarea id="clarify-input" class="flex-1 p-6 focus:outline-none resize-none font-mono text-xs sm:text-sm text-slate-600 leading-relaxed bg-white rounded-b-xl" spellcheck="false">
+# User Story
+As a user, I want to upload a profile picture so that I can personalize my account.
+
+# Functional Requirements
+1. User can upload an image file.
+2. User can crop the image before saving.
+3. System saves the image.
+
+# Success Criteria
+- User profile shows the new image.
+                        </textarea>
+                    </div>
+
+                    <!-- Right: Clarified Spec Output -->
+                    <div class="flex flex-col h-[600px] bg-slate-800 rounded-xl shadow-xl border border-slate-700">
+                        <div class="p-4 border-b border-slate-700 bg-slate-900 rounded-t-xl flex justify-between items-center">
+                            <h3 class="font-bold text-amber-400">Coverage & Clarification</h3>
+                            <span id="clarify-loading" class="hidden text-amber-200 text-xs animate-pulse">Scanning Coverage...</span>
+                        </div>
+                        <div class="flex-1 p-6 overflow-y-auto custom-scrollbar prose prose-invert prose-sm max-w-none bg-slate-900 rounded-b-xl">
+                            <div id="clarify-output" class="text-slate-400 italic">
+                                Click "Run Coverage Scan" to analyze the spec for missing functional details and edge cases...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- USE CASE SECTION -->
+        <section id="use-case" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-3 text-center">Use Case: Building a "Password Reset" Feature</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center mb-12">Let's compare the two approaches for a common feature.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-red-600 mb-4">The "Vibe" Approach (High Friction)</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-3 bg-gray-100 rounded-md">
+                            <span class="font-semibold text-slate-800">Dev:</span>
+                            <p class="text-slate-600">"AI, add a password reset flow."</p>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-md">
+                            <span class="font-semibold text-blue-800">AI:</span>
+                            <p class="text-blue-700">"Sure! Here's code that generates a reset token and stores it in a global variable for 1 hour."</p>
+                        </div>
+                        <div class="p-3 bg-gray-100 rounded-md">
+                            <span class="font-semibold text-slate-800">Dev:</span>
+                            <p class="text-slate-600">"Ugh, no. That's not secure. The token *must* be saved in the DB."</p>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-md">
+                            <span class="font-semibold text-blue-800">AI:</span>
+                            <p class="text-blue-700">"Got it. Here's new code that saves a plain-text token to the `UserTokens` table."</p>
+                        </div>
+                        <div class="p-3 bg-gray-100 rounded-md">
+                            <span class="font-semibold text-slate-800">Dev:</span>
+                            <p class="text-slate-600">"No! We never store tokens in plain text. It needs to be hashed. And you forgot to add an expiry check in the reset endpoint. And use our SendGrid mailer, not `nodemailer`."</p>
+                        </div>                        
+                        <div class="p-3 bg-red-100 text-red-700 rounded-md mt-4">
+                            <span class="font-bold">Result:</span> 5+ iterations, security flaws. <span class="font-bold">Total Time: ± 9.5 Hours.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-green-600 mb-4">The "Speckit" Approach (High Precision)</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="p-3 bg-gray-100 rounded-md">
+                            <span class="font-semibold text-slate-800">Dev:</span>
+                            <p class="text-slate-600">Writes `password_reset.md` (Requirements):</p>
+                        </div>
+                        <pre class="bg-slate-800 text-white p-4 rounded-md text-xs overflow-x-auto">
+# User Story
+As a user, I want to reset my password securely.
+
+# Functional Requirements
+1. Request must require a registered email.
+2. Token must be hashed (bcrypt) in DB.
+3. Token expires in 2 hours.
+
+# Success Criteria
+- User receives email with link.
+- Old password invalid after reset.
+                        </pre>
+                        <div class="p-3 bg-gray-100 rounded-md">
+                            <span class="font-semibold text-slate-800">Dev:</span>
+                            <p class="text-slate-600">"AI, implement `password_reset.spec`."</p>
+                        </div>                        
+                        <div class="p-3 bg-green-100 text-green-700 rounded-md mt-4">
+                            <span class="font-bold">Result:</span> 1-2 iteration. AI generates code matching the Functional Requirements exactly. <span class="font-bold">Total Time: ± 5.0 Hours.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EFFICIENCY SECTION -->
+        <section id="efficiency" class="mb-20 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-3 text-center">The Efficiency & Cost Argument</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center mb-12">For a detail-oriented team, the numbers are clear. The upfront time for writing a spec is immediately repaid by eliminating ambiguous rework.</p>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="flex flex-wrap -mb-px" id="tab-buttons">
+                        <button class="tab-btn active text-sm md:text-base font-medium py-3 px-4 md:px-6 border-b-2 border-transparent text-slate-500 hover:text-indigo-600" data-target="panel-time">Time Savings</button>
+                        <button class="tab-btn text-sm md:text-base font-medium py-3 px-4 md:px-6 border-b-2 border-transparent text-slate-500 hover:text-indigo-600" data-target="panel-quality">Quality & Risk</button>
+                        <button class="tab-btn text-sm md:text-base font-medium py-3 px-4 md:px-6 border-b-2 border-transparent text-slate-500 hover:text-indigo-600" data-target="panel-cost">Cost & Effort Analysis</button>
+                    </nav>
+                </div>
+
+                <div id="tab-panels">
+                    <div id="panel-time" class="tab-panel">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Feature Development Lifecycle (Total Hours)</h3>
+                        <p class="text-center text-slate-600 mb-6">Speckit reduces total feature time by 47% by converting unpredictable rework time into a predictable, upfront planning phase.</p>
+                        <div class="chart-container">
+                            <canvas id="timeChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div id="panel-quality" class="tab-panel hidden">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Code Quality & Risk Profile (Score 1-10)</h3>
+                        <p class="text-center text-slate-600 mb-6">"Vibe Coding" optimizes for initial speed, sacrificing everything else. "Speckit" optimizes for quality, security, and predictability, which leads to a faster *final* product.</p>
+                        <div class="chart-container">
+                            <canvas id="qualityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="panel-cost" class="tab-panel hidden">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Distribution of Developer Effort (Cost)</h3>
+                        <p class="text-center text-slate-600 mb-6">Speckit shifts effort away from costly, reactive debugging (53% of time) to valuable, proactive planning (30% of time). This is a more sustainable and efficient cost model.</p>
+                        <div class="chart-container" style="max-height: 400px;">
+                            <canvas id="costChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- NEXT STEPS (Email Drafter Removed) -->
+        <section id="next-steps" class="pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-slate-800 mb-3 text-center">Recommendation & Next Steps</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center mb-12">Adopting Speckit is a low-risk, high-reward change that aligns with our engineering goal of shipping robust, high-quality code. It moves our team from *hoping* the AI gets it right to *ensuring* it does.</p>
+
+            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8 mb-12">
+                <ol class="space-y-4">
+                    <li class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                        <div>
+                            <h4 class="text-lg font-semibold">Pilot Program (Sprint N+1)</h4>
+                            <p class="text-slate-600">Select one non-critical feature (e.g., a new admin endpoint) and build it using the Speckit workflow. We will measure time, iterations, and dev sentiment.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        <div>
+                            <h4 class="text-lg font-semibold">Develop Spec Templates</h4>
+                            <p class="text-slate-600">Create 3-5 reusable `.spec` templates for our most common tasks (e.g., new CRUD API, frontend component with data fetching) to speed up the spec-writing process.</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                        <div>
+                            <h4 class="text-lg font-semibold">Team Workshop</h4>
+                            <p class="text-slate-600">Host a 1-hour workshop on "How to Write Effective Specs" to ensure the entire team understands the process and benefits.</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+        </section>
+
+    </main>
+    
+    <footer class="text-center py-8 mt-12 border-t border-gray-200">
+        <p class="text-sm text-slate-500">Internal Presentation</p>
+    </footer>
+
+    <!-- Fullscreen Modal -->
+    <div id="spec-modal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity" id="modal-backdrop"></div>
+        <div class="absolute inset-4 md:inset-10 bg-slate-900 rounded-xl shadow-2xl overflow-hidden flex flex-col border border-slate-700 transform transition-all">
+            <div class="flex justify-between items-center p-4 border-b border-slate-700 bg-slate-800">
+                <h3 class="text-xl font-bold text-indigo-400">Generated Specification (Fullscreen)</h3>
+                <button id="close-modal-btn" class="text-slate-400 hover:text-white bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded transition-colors text-sm font-medium">Close ✕</button>
+            </div>
+            <div class="flex-1 p-8 overflow-y-auto prose prose-invert max-w-none custom-scrollbar" id="modal-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "AIzaSyA_JZ5iQzoU-qrw-RPzOKiAD5emmg-kZIE"; // Environment will inject key here.
+
+        async function callGemini(prompt, systemInstruction) {
+            if (!apiKey) {
+                alert("API Key is missing.");
+                return "API Key is missing. Unable to generate content.";
+            }
+            
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+                } catch (e) {
+                    if (i === 4) return "Error connecting to AI service.";
+                    await new Promise(r => setTimeout(r, delays[i]));
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Gemini Logic ---
+
+            // 1. Vibe Analyzer
+            const analyzeBtn = document.getElementById('analyze-vibe-btn');
+            const vibeInput = document.getElementById('vibe-input');
+            const vibeOutput = document.getElementById('vibe-analysis-output');
+
+            analyzeBtn.addEventListener('click', async () => {
+                const text = vibeInput.value.trim();
+                if (!text) return;
+                analyzeBtn.disabled = true;
+                analyzeBtn.innerHTML = 'Analyzing...';
+                vibeOutput.classList.remove('hidden');
+                vibeOutput.innerHTML = '<em>Consulting the risk matrix...</em>';
+                const systemPrompt = "You are a senior security engineer. Analyze this vague prompt for 3 specific risks (Security, Scalability, Maintainability). Use Markdown. Be concise.";
+                const result = await callGemini(`Analyze: "${text}"`, systemPrompt);
+                if (result) vibeOutput.innerHTML = marked.parse(result);
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = 'Analyze Risk ✨';
+            });
+
+            // 2. Spec-O-Matic (UPDATED PROMPT: Functional Focus)
+            const specBtn = document.getElementById('generate-spec-btn');
+            const demoInput = document.getElementById('demo-input');
+            const demoOutput = document.getElementById('demo-output');
+            const demoLoading = document.getElementById('demo-loading');
+            const transferBtn = document.getElementById('transfer-to-clarify-btn');
+
+            let lastGeneratedSpecRaw = "";
+
+            specBtn.addEventListener('click', async () => {
+                const text = demoInput.value.trim();
+                if (!text) return alert("Please enter a vague idea first.");
+                
+                specBtn.disabled = true;
+                specBtn.classList.add('opacity-75');
+                demoLoading.classList.remove('hidden');
+                transferBtn.classList.add('hidden'); // Hide until generated
+                demoOutput.innerHTML = "";
+
+                // Updated prompt to focus on User Stories and Functional Req, NOT technical code
+                const systemPrompt = "You are an expert Product Owner using GitHub Spec-Kit. Convert the user's vague idea into a high-level Requirement Specification. Do NOT write technical code, API endpoints, or DB schemas yet. Structure your output exactly like this:\n1. **User Story**: As a <role>, I want to <action>, so that <benefit>.\n2. **Functional Requirements**: List specific behaviors (FR-001, FR-002...).\n3. **Success Criteria**: Measurable outcomes (e.g., 'User can...').\n4. **Out of Scope**: What we are NOT doing. Use Markdown.";
+                const result = await callGemini(`Convert to Requirements Spec: "${text}"`, systemPrompt);
+
+                if (result) {
+                     lastGeneratedSpecRaw = result; // Store for transfer
+                     demoOutput.innerHTML = marked.parse(result);
+                     transferBtn.classList.remove('hidden'); // Show transfer button
+                } else {
+                     demoOutput.innerHTML = "Error: No response.";
+                }
+                specBtn.disabled = false;
+                specBtn.classList.remove('opacity-75');
+                demoLoading.classList.add('hidden');
+            });
+
+            // 3. Speckit Clarify Logic (UPDATED PROMPT: Coverage & Questions)
+            const clarifyBtn = document.getElementById('run-clarify-btn');
+            const clarifyInput = document.getElementById('clarify-input');
+            const clarifyOutput = document.getElementById('clarify-output');
+            const clarifyLoading = document.getElementById('clarify-loading');
+
+            // Transfer Button Logic
+            transferBtn.addEventListener('click', () => {
+                const clarifySection = document.getElementById('clarify');
+                clarifyInput.value = lastGeneratedSpecRaw;
+                clarifySection.scrollIntoView({ behavior: 'smooth' });
+                clarifyInput.classList.add('bg-yellow-50');
+                setTimeout(() => clarifyInput.classList.remove('bg-yellow-50'), 500);
+            });
+
+            clarifyBtn.addEventListener('click', async () => {
+                const specText = clarifyInput.value.trim();
+                if (!specText) return alert("Please enter a spec to clarify.");
+
+                clarifyBtn.disabled = true;
+                clarifyLoading.classList.remove('hidden');
+                clarifyOutput.innerHTML = "";
+                
+                // Updated Prompt to match the "Clarify" tool screenshot
+                const systemPrompt = "You are the 'Speckit Clarify' tool. Analyze the provided spec for ambiguity.\n\nOutput Format:\n**Coverage Analysis**:\n- **Functional Scope & Behavior**: [Clear/Partial/Missing] - Brief note.\n- **Domain & Data Model**: [Clear/Partial/Missing] - Brief note.\n- **Edge Cases & Failure Handling**: [Clear/Partial/Missing] - Brief note.\n- **Security & Compliance**: [Clear/Partial/Missing] - Brief note.\n\nI've identified 1 critical clarification question.\n\n**Question 1**:\n[Describe a specific ambiguity found in the spec]\n\n| Option | Description |\n| :--- | :--- |\n| A | [Option A] |\n| B | [Option B] |\n| C | [Option C] |\n\nUse Markdown tables.";
+                
+                const result = await callGemini(`Analyze this Requirements Spec:\n\n${specText}`, systemPrompt);
+
+                if (result) {
+                    clarifyOutput.innerHTML = marked.parse(result);
+                } else {
+                    clarifyOutput.innerHTML = "Error: No response.";
+                }
+                clarifyBtn.disabled = false;
+                clarifyLoading.classList.add('hidden');
+            });
+
+            // Modal Logic
+            const viewFullBtn = document.getElementById('view-full-btn');
+            const modal = document.getElementById('spec-modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+
+            viewFullBtn.addEventListener('click', () => {
+                const currentContent = document.getElementById('demo-output').innerHTML;
+                modalContent.innerHTML = currentContent;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            };
+            closeModalBtn.addEventListener('click', closeModal);
+            modalBackdrop.addEventListener('click', closeModal);
+
+            // Chart Logic 
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Hours'
+                        }
+                    }
+                }
+            };
+
+            const ctxTime = document.getElementById('timeChart').getContext('2d');
+            new Chart(ctxTime, {
+                type: 'bar',
+                data: {
+                    labels: ['Feature Development Lifecycle'],
+                    datasets: [
+                        { label: 'Spec Creation', data: [0, 1.5], backgroundColor: '#a5b4fc' },
+                        { label: 'Initial AI Gen', data: [0.5, 0.5], backgroundColor: '#818cf8' },
+                        { label: 'Dev Rework & Fixes', data: [5.0, 1.0], backgroundColor: '#ef4444' },
+                        { label: 'QA & Testing', data: [4.0, 2.0], backgroundColor: '#f97316' }
+                    ]
+                },
+                options: {
+                    ...chartOptions,
+                    indexAxis: 'y',
+                    scales: {
+                        x: { stacked: true, beginAtZero: true, title: { display: true, text: 'Total Hours' } },
+                        y: { stacked: true, labels: ['Vibe Coding', 'Speckit Coding'] }
+                    }
+                }
+            });
+
+            const ctxQuality = document.getElementById('qualityChart').getContext('2d');
+            new Chart(ctxQuality, {
+                type: 'radar',
+                data: {
+                    labels: ['Initial Speed', 'Code Quality', 'Predictability', 'Security', 'Developer Rework', 'Testability'],
+                    datasets: [
+                        {
+                            label: 'Vibe Coding',
+                            data: [9, 3, 2, 2, 9, 4],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                            pointBackgroundColor: '#ef4444'
+                        },
+                        {
+                            label: 'Speckit Coding',
+                            data: [5, 9, 10, 8, 3, 9],
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                            pointBackgroundColor: '#4f46e5'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 10,
+                            pointLabels: {
+                                font: {
+                                    size: 13
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const ctxCost = document.getElementById('costChart').getContext('2d');
+            new Chart(ctxCost, {
+                type: 'doughnut',
+                data: {
+                    labels: {
+                        vibe: ['Rework & Fixes (53%)', 'QA & Testing (42%)', 'Initial AI Gen (5%)'],
+                        speckit: ['Spec Creation (30%)', 'QA & Testing (40%)', 'Rework & Fixes (20%)', 'Initial AI Gen (10%)']
+                    },
+                    datasets: [
+                        {
+                            label: 'Vibe Coding (Total 9.5h)',
+                            data: [5.0, 4.0, 0.5],
+                            backgroundColor: ['#ef4444', '#f97316', '#818cf8'],
+                        },
+                        {
+                            label: 'Speckit Coding (Total 5.0h)',
+                            data: [1.5, 2.0, 1.0, 0.5],
+                            backgroundColor: ['#a5b4fc', '#f97316', '#ef4444', '#818cf8'],
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                generateLabels: (chart) => {
+                                    const data = chart.data;
+                                    if (data.labels.vibe && data.datasets.length) {
+                                        const datasetVibe = data.datasets[0];
+                                        const datasetSpeckit = data.datasets[1];
+                                        
+                                        const vibeLabels = data.labels.vibe.map((label, i) => ({
+                                            text: `Vibe: ${label}`,
+                                            fillStyle: datasetVibe.backgroundColor[i],
+                                            strokeStyle: datasetVibe.backgroundColor[i],
+                                            datasetIndex: 0,
+                                            index: i
+                                        }));
+
+                                        const speckitLabels = data.labels.speckit.map((label, i) => ({
+                                            text: `Speckit: ${label}`,
+                                            fillStyle: datasetSpeckit.backgroundColor[i],
+                                            strokeStyle: datasetSpeckit.backgroundColor[i],
+                                            datasetIndex: 1,
+                                            index: i
+                                        }));
+                                        
+                                        return vibeLabels.concat(speckitLabels);
+                                    }
+                                    return [];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const data = context.chart.data; // Added line to fix ReferenceError
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + ' hours';
+                                    }
+                                    let fullLabel = context.datasetIndex === 0 ? 
+                                        data.labels.vibe[context.dataIndex] : 
+                                        data.labels.speckit[context.dataIndex];
+                                    return `${label} (${fullLabel.split('(')[1]}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetPanelId = button.getAttribute('data-target');
+
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'text-indigo-600');
+                        btn.classList.add('text-slate-500');
+                    });
+                    
+                    button.classList.add('active', 'text-indigo-600');
+                    button.classList.remove('text-slate-500');
+
+                    tabPanels.forEach(panel => {
+                        if (panel.id === targetPanelId) {
+                            panel.classList.remove('hidden');
+                        } else {
+                            panel.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+
+            const problemItems = document.querySelectorAll('.problem-item');
+            problemItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetId = item.getAttribute('data-target');
+                    const targetPanel = document.getElementById(targetId);
+                    const arrow = item.querySelector('span');
+                    
+                    targetPanel.classList.toggle('hidden');
+                    arrow.classList.toggle('rotate-180');
+                });
+            });
+
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section[id]');
+
+            function onScroll() {
+                let currentSection = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (window.scrollY >= sectionTop - 100) {
+                        currentSection = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSection}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', onScroll);
+            onScroll();
+
+        });
+    </script>
+</body>
+</html>
